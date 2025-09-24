@@ -17,6 +17,6 @@ public interface ProductService {     //public POR DEFECTO=
     ResponseEntity<String> updateProduct(Integer id, Product upProduct);
 
     // 🔍 SEARCH MEJORADO
-    ResponseEntity<List<Product>> advancedSearch(String name, Long minPrice, Long maxPrice);
+    ResponseEntity<List<Product>> searchProduct(String name);
 
     }

@@ -20,7 +20,7 @@ public class ProductoController {
 
 
     @GetMapping
-    public ResponseEntity<List<Product>> getAllProductos(){
+    public List<Product> getAllProductos(){
         return productService.getAllProductos();
     }
 
@@ -49,12 +49,10 @@ public class ProductoController {
     }
 
     // 🔍 SEARCH
-    @GetMapping("/search/advanced")
-    public List<Product> advancedSearch(
-            @RequestParam(value = "name", required = false) String name,
-            @RequestParam(value = "minPrice", required = false) Long minPrice,
-            @RequestParam(value = "maxPrice", required = false) Long maxPrice) {
+    @GetMapping("/search")
+    public List<Product> searchProduct(@RequestParam(name = "name", required = false) String name){
 
-        return productService.advancedSearch(name, minPrice, maxPrice).getBody();
+        return productService.searchProduct(name).getBody();
     }
+
 }

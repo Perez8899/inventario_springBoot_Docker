@@ -4,6 +4,7 @@ import com.inventario_spring_docker.Exception.ProductNotFoundException;
 import com.inventario_spring_docker.models.Product;
 import com.inventario_spring_docker.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpInputMessage;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -62,8 +63,9 @@ public class ProductServiceImp {     //logic
 
     // 🔍 SEARCH MEJORADO
 
-    public ResponseEntity<List<Product>> advancedSearch(String name, Long minPrice, Long maxPrice) {
+    public ResponseEntity<List<Product>> searchProduct(String name) {
 
        return null;
     }
+
 }
