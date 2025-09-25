@@ -2,6 +2,8 @@ package com.inventario_spring_docker.controllers;
 
 
 import com.inventario_spring_docker.models.Product;
+import com.inventario_spring_docker.response.MessageResponse;
+import com.inventario_spring_docker.response.ProductResponse;
 import com.inventario_spring_docker.services.ProductServiceImp;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,39 +17,41 @@ public class ProductoController {
 
     @Autowired
    private ProductServiceImp productService;
-    private Integer nextId = 1; // Contador para IDs automáticos
 
-
-
+    //----------------------------------------------------------------------------------------------------------------------
     @GetMapping
-    public List<Product> getAllProductos(){
-        return productService.getAllProductos();
+    public ResponseEntity<List<Product>> getAllProductos(){
+        List<Product> products= productService.getAllProductos();
+        return ResponseEntity.ok(products);
     }
-
-    @GetMapping("/{id}") //trae producto especifico
-    public Product getProduct(@PathVariable Integer id){
-        return productService.getProductId(id);
+    //----------------------------------------------------------------------------------------------------------------------
+    @GetMapping("/{id}")
+    public ResponseEntity<Product> getProductById(@PathVariable Integer id) {
+        Product product = productService.getProductId(id);
+        return ResponseEntity.ok(product);
     }
-
+    //----------------------------------------------------------------------------------------------------------------------
     @PostMapping
-    public void addProducto(@RequestBody @Valid Product product) {
-        // Asignar ID automáticamente
-        product.setId(nextId++);
-        productService.addProducto(product);
-    }
+    public ResponseEntity<ProductResponse> addProducto(@RequestBody Product product) {
 
+        ProductResponse response = productService.addProducto(product);
+        return ResponseEntity.ok(response);
+    }
+    //----------------------------------------------------------------------------------------------------------------------
     @DeleteMapping("/{id}")
-    public void deleteProduct(@PathVariable Integer id) {
+    public ResponseEntity<MessageResponse> deleteProduct(@PathVariable Integer id) {
 
-        productService.deleteProduct(id);
+        MessageResponse response = productService.deleteProduct(id);
+        return ResponseEntity.ok(response);
     }
-
+    //----------------------------------------------------------------------------------------------------------------------
     @PutMapping("/{id}")
-    public void updateProduct(@PathVariable Integer id,
+    public ResponseEntity<ProductResponse> updateProduct(@PathVariable Integer id,
                               @RequestBody Product upProduct) {
-        productService.updateProduct(id, upProduct);
+        ProductResponse response = productService.updateProduct(id, upProduct);
+        return ResponseEntity.ok(response);
     }
-
+    //----------------------------------------------------------------------------------------------------------------------
     // 🔍 SEARCH
     @GetMapping("/search")
     public List<Product> searchProduct(@RequestParam(name = "name", required = false) String name){
