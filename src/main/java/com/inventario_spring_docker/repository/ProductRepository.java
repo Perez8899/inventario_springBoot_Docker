@@ -11,6 +11,9 @@ import java.util.List;
 @Repository  //CRUD
 public interface ProductRepository extends CrudRepository<Product, Integer> {
 
-    @Query("SELECT c FROM Product c WHERE name LIKE  %:name%")
+    @Query("SELECT p FROM Product p WHERE p.name LIKE  %:name%")
     List<Product> finByName(@Param("name") String name);
+
+    // Sin @Query (Spring Data JPA lo genera automáticamente)
+    List<Product> findByNameContainingIgnoreCase(String name);
 }

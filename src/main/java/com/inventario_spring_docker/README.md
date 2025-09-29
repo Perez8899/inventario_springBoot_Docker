@@ -27,15 +27,61 @@ spring.jpa.hibernate.ddl-auto=update
 spring.jpa.show-sql=true
 spring.jpa.properties.hibernate.format_sql=true
 
-#Para produccion
-#spring.jpa.hibernate.ddl-auto=validate
-#spring.jpa.show-sql=false
 
+#levantar mysql y spring desde DOCKER
+```bash
+# 1. Limpiar
+docker stop spring-app mysql-db
+docker rm spring-app mysql-db
 
-# Otras configuraciones útiles
-#Sincroniza la zona horaria entre tu aplicación Java y la base de datos MySQL.
-spring.jpa.properties.hibernate.jdbc.time_zone=UTC 
+# 2. Crear MySQL con inventory_docker
+docker run -d --name mysql-db --network spring-network -e MYSQL_ROOT_PASSWORD=root2 -e MYSQL_DATABASE=inventory_docker mysql:latest
 
-#Controla la duración de la sesión de Hibernate. ---e cierra al terminar la transacción del servicio
-spring.jpa.open-in-view=false
+# 3. Esperar
+Start-Sleep -Seconds 30
+
+# 4. Ejecutar Spring Boot
+docker run -d -p 8080:8080 --name spring-app --network spring-network -e SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/inventory_docker -e SPRING_DATASOURCE_USERNAME=root -e SPRING_DATASOURCE_PASSWORD=root2 inventoy-spring-app
+
+# 5. Verificar
+docker logs spring-app
+
+```
+
+#conectarse a la bd desde CMD
+```bash
+docker exec -it mysql-db mysql -u root -p
+# Contraseña: root2
+
+SHOW DATABASES;
+USE inventory_docker;
+SHOW TABLES;
+SELECT * FROM products;
+```
+
+#VOULUIMEN POARA QUE NO SE ELIMINEN LOS DATOS
+##paramos los contenedores, eliminamos y creamos de nuevo
+```declarative
+docker stop spring-app mysql-db
+docker rm spring-app mysql-db
+
+#2 volumen para MySQL
+docker volume create mysql_data
+
+# 3 MySQL con volumen
+docker run -d --name mysql-db --network spring-network `
+  -e MYSQL_ROOT_PASSWORD=root2 `
+  -e MYSQL_DATABASE=inventory_docker `
+  -v mysql_data:/var/lib/mysql `
+  mysql:latest
+
+# 4. Esperar que cargue MYSQL
+Start-Sleep -Seconds 30
+
+# 5. Ejecutar Spring Boot
+docker run -d -p 8080:8080 --name spring-app --network spring-network `
+  -e SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/inventory_docker `
+  -e SPRING_DATASOURCE_USERNAME=root `
+  -e SPRING_DATASOURCE_PASSWORD=root2 `
+  inventoy-spring-app
 ```

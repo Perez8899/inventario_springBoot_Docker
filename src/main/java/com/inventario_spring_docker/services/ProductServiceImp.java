@@ -3,6 +3,7 @@ package com.inventario_spring_docker.services;
 import com.inventario_spring_docker.Exception.ProductNotFoundException;
 import com.inventario_spring_docker.models.Product;
 import com.inventario_spring_docker.repository.ProductRepository;
+import com.inventario_spring_docker.response.ApiResponse;
 import com.inventario_spring_docker.response.MessageResponse;
 import com.inventario_spring_docker.response.ProductResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,8 +60,20 @@ public class ProductServiceImp {     //logic
     //----------------------------------------------------------------------------------------------------------------------
     // 🔍 SEARCH
     public ResponseEntity<List<Product>> searchProduct(String name) {
+        if (name == null || name.trim().isEmpty()) {
+            // Si no hay nombre, retornar todos los productos
+            List<Product> allProducts = (List<Product>) repository.findAll();
+            return ResponseEntity.ok(allProducts);
+        }
 
-       return null;
+        // Buscar productos que contengan el nombre
+        List<Product> products = repository.findByNameContainingIgnoreCase(name);
+
+        if (products.isEmpty()) {
+            return ResponseEntity.noContent().build(); // 204 No Content
+        }
+
+        return ResponseEntity.ok(products);
     }
 
 }

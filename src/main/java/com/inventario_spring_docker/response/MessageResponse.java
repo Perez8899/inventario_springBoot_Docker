@@ -1,6 +1,7 @@
 package com.inventario_spring_docker.response;
 
-public class MessageResponse extends ApiResponse<Void> {
+public class MessageResponse extends ApiResponse<Void> { //void por que DATA sera null
+
     public MessageResponse(boolean success, String message) {
         super(success, message, null);
     }

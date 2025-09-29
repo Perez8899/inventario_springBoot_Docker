@@ -2,6 +2,7 @@ package com.inventario_spring_docker.controllers;
 
 
 import com.inventario_spring_docker.models.Product;
+import com.inventario_spring_docker.response.ApiResponse;
 import com.inventario_spring_docker.response.MessageResponse;
 import com.inventario_spring_docker.response.ProductResponse;
 import com.inventario_spring_docker.services.ProductServiceImp;
@@ -47,16 +48,16 @@ public class ProductoController {
     //----------------------------------------------------------------------------------------------------------------------
     @PutMapping("/{id}")
     public ResponseEntity<ProductResponse> updateProduct(@PathVariable Integer id,
-                              @RequestBody Product upProduct) {
+                                                         @RequestBody Product upProduct) {
         ProductResponse response = productService.updateProduct(id, upProduct);
         return ResponseEntity.ok(response);
     }
     //----------------------------------------------------------------------------------------------------------------------
     // 🔍 SEARCH
     @GetMapping("/search")
-    public List<Product> searchProduct(@RequestParam(name = "name", required = false) String name){
+    public ResponseEntity<List<Product>> searchProductByPath(@RequestParam(name ="name", required = false) String name){
 
-        return productService.searchProduct(name).getBody();
+        return productService.searchProduct(name);
     }
 
 }
