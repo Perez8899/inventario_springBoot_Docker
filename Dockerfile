@@ -1,4 +1,4 @@
-# Multi-stage build
+# Multi-stage build se crea primero el .jar saltando los TEST de PROPERTIEs
 #FROM maven:3.8.6-openjdk-17 AS builder
 #WORKDIR /app
 #COPY . .

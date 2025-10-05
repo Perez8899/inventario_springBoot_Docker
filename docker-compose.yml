@@ -1,37 +1,42 @@
-version: '3.8'
 services:
-  mysql:
-    image: mysql:8.0
-    container_name: mysql-container
+  mysql-db:
+    image: mysql:latest
+    container_name: mysql-db
     environment:
-      MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: inventario
-      MYSQL_USER: usuario
-      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: root2
+      MYSQL_DATABASE: inventory_docker
     ports:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
     networks:
-      - inventario-network
+      - spring-network
+    healthcheck: #Spring Boot inicia inmediatamente después de MySQL
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot2" ]
+      timeout: 20s
+      retries: 10
+      start_period: 40s
 
   spring-app:
-    image: inventoy-spring-app  # ← Usa la imagen que ya creaste
-    container_name: spring-container
+    image: inventoy-spring-app:latest  # ← Se usa la imagen creada en Dockerfile
+    container_name: spring-app
+    pull_policy: never
     ports:
       - "8080:8080"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-container:3306/inventario
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db:3306/inventory_docker
       SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD:
+      SPRING_DATASOURCE_PASSWORD: root2
+    volumes:
+      - spring_data:/app/data
     depends_on:
-      - mysql
+      - mysql-db
     networks:
-      - inventario-network
+      - spring-network
 
 volumes:
   mysql_data:
 
 networks:
-  inventario-network:
-    driver: bridge
+  spring-network:
+      driver: bridge
