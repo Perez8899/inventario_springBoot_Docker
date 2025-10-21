@@ -1,3 +1,5 @@
+version: "3.9"
+
 services:
   mysql-db:
     image: mysql:latest
@@ -11,26 +13,40 @@ services:
       - mysql_data:/var/lib/mysql
     networks:
       - spring-network
-    healthcheck: #Spring Boot inicia inmediatamente después de MySQL
-      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot2" ]
-      timeout: 20s
-      retries: 10
-      start_period: 40s
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-proot2"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   spring-app:
-    image: inventoy-spring-app:latest  # ← Se usa la imagen creada en Dockerfile
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: spring-app
-    pull_policy: never
     ports:
       - "8080:8080"
     environment:
+      SPRING_PROFILES_ACTIVE: docker
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db:3306/inventory_docker
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root2
-    volumes:
-      - spring_data:/app/data
     depends_on:
-      - mysql-db
+      mysql-db:
+        condition: service_healthy
+    networks:
+      - spring-network
+
+  react-frontend:
+    build:
+      context: ./../inventario-frontend
+      args:
+        NEXT_PUBLIC_API_URL: http://localhost:8080
+    container_name: react-frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - spring-app
     networks:
       - spring-network
 
@@ -39,4 +55,4 @@ volumes:
 
 networks:
   spring-network:
-      driver: bridge
+    driver: bridge

@@ -9,5 +9,4 @@ public class InventarioSpringDockerApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(InventarioSpringDockerApplication.class, args);
 	}
-
 }

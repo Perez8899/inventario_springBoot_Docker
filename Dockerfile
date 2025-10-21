@@ -1,21 +1,20 @@
-# Multi-stage build se crea primero el .jar saltando los TEST de PROPERTIEs
-#FROM maven:3.8.6-openjdk-17 AS builder
-#WORKDIR /app
-#COPY . .
-#RUN mvn clean package -DskipTests
-
-# imagen base de Java
-FROM openjdk:17-jdk-slim
-
-#donde crear espacio de trabajo
+# Build stage (compilar en Docker)
+FROM maven:3.9.3-eclipse-temurin-17 AS builder
 WORKDIR /app
 
-# Copiar el JAR de la aplicación (generado por Maven)
-#COPY target/*.jar app.jar
-COPY target/inventario_spring_docker-0.0.1-SNAPSHOT.jar app.jar
+# Copiar solo pom y src
+COPY pom.xml .
+COPY src ./src
 
-# Exponer el puerto que usa Spring Boot
+# Construir la app sin tests
+RUN mvn clean package -DskipTests
+
+# Runtime stage
+FROM openjdk:17-jdk-slim
+WORKDIR /app
+
+# Copiar el JAR desde el builder
+COPY --from=builder /app/target/inventario_spring_docker-0.0.1-SNAPSHOT.jar app.jar
+
 EXPOSE 8080
-
-# Comando para ejecutar la aplicación
 ENTRYPOINT ["java", "-jar", "app.jar"]
