@@ -36,7 +36,7 @@ Requisitos Previos
 Docker y Docker Compose instalados
 
 1. Clonar los repositorios
-bash
+
  Clonar backend
 git clone https://github.com/Perez8899/inventario_springBoot_Docker.git
 cd inventario_springBoot_Docker
@@ -44,7 +44,7 @@ cd inventario_springBoot_Docker
  Clonar frontend (en la misma carpeta padre o ajustar ruta en docker-compose)
 git clone https://github.com/Perez8899/inventario-frontend.git ../inventario-frontend
 2. Levantar todos los servicios
-bash
+
 docker-compose up -d
 Este comando levantará:
 
@@ -55,7 +55,7 @@ Spring Boot en el puerto 8080
 React Frontend en el puerto 3000
 
 3. Verificar que los contenedores están corriendo
-bash
+
 docker ps
 4. Acceder a la aplicación
 Frontend: http://localhost:3000
@@ -63,7 +63,6 @@ Frontend: http://localhost:3000
 Backend API: http://localhost:8080
 
 5. Detener los servicios
-bash
 docker-compose down
 ```
 
